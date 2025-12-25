@@ -1,6 +1,6 @@
-# Lorebary DeepSeek V3.2 Proxy
+# Lorebary DeepSeek 3.2 Proxy
 
-A proxy server that connects Lorebary (or any OpenAI-compatible client) to NVIDIA NIM's DeepSeek V3.2 model. Features a web-based control panel for easy configuration.
+A proxy server that connects Lorebary (or any OpenAI-compatible client) to NVIDIA NIM's DeepSeek 3.2 model. Features a web-based control panel for easy configuration.
 
 ## Features
 
