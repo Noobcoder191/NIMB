@@ -41,14 +41,14 @@
 ### Installation
 
 ```bash
-# Clone the repo
+# Clone the repo or download it
 git clone https://github.com/yourusername/nim-proxy.git
 cd nim-proxy
 
 # Install dependencies
 npm install
 
-# Place cloudflared.exe in the project folder
+# Rename the cloudflared executable to "cloudflared.exe" and place it in the project folder
 ```
 
 ### Running
@@ -86,7 +86,6 @@ Access at **http://localhost:3001**
 | Endpoint | Description |
 |----------|-------------|
 | `POST /v1/chat/completions` | Chat completions (OpenAI format) |
-| `GET /v1/models` | List available models |
 | `GET /health` | Health check + stats |
 
 ### Example Request
@@ -123,21 +122,6 @@ curl -X POST http://localhost:3000/v1/chat/completions \
 | Port in use | Run `stop-proxy.bat` or kill processes on 3000/3001 |
 | Tunnel not starting | Make sure `cloudflared.exe` is in project folder |
 | Request timeout | Check internet connection and API key |
-
----
-
-## 📁 Files
-
-```
-nim-proxy/
-├── server.js         # Main server + control panel
-├── start-proxy.bat   # Windows launcher
-├── stop-proxy.bat    # Windows stopper
-├── package.json
-└── .env              # Auto-created (optional)
-```
-
----
 
 ## 📜 License
 
