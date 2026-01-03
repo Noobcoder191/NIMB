@@ -1,52 +1,57 @@
 @echo off
-title Lorebary Proxy Launcher
+title NIM Proxy Launcher
 color 0A
 
 echo ========================================
-echo    LOREBARY DEEPSEEK V3.2 PROXY
+echo            NIM PROXY
 echo ========================================
 echo.
 
-REM Automatically change to the directory where this script is located
+REM Change to script directory
 cd /d "%~dp0"
+
+REM Create .env file if it doesn't exist
+if not exist ".env" (
+    echo Creating .env file...
+    echo NIM_API_KEY=> .env
+    echo .env file created. You can set your API key in the Control Panel.
+    echo.
+)
 
 echo Current directory: %CD%
 echo.
 echo Starting proxy server...
 echo.
 
-REM Start the Node.js server in a new window
-start "Lorebary Proxy Server" cmd /k "npm start"
+REM Start the Node.js server
+start "NIM Proxy Server" cmd /k "npm start"
 
 echo Waiting for server to start...
-timeout /t 5 /nobreak >nul
+timeout /t 4 /nobreak >nul
 
 echo.
 echo Starting Cloudflare tunnel...
 echo.
 
-REM Start Cloudflare tunnel in a separate window (stays open)
-start "Cloudflare Tunnel - CHECK THIS WINDOW FOR URL" cmd /k "echo Starting Cloudflare Tunnel... && echo. && echo COPY THE URL THAT APPEARS BELOW: && echo. && cloudflared tunnel --url http://localhost:3000"
+REM Start Cloudflare tunnel
+start "Cloudflare Tunnel" cmd /k "echo Starting Cloudflare Tunnel... && echo. && echo COPY THE URL BELOW: && echo. && cloudflared tunnel --url http://localhost:3000"
 
 echo.
 echo ========================================
-echo    PROXY IS NOW RUNNING!
+echo        PROXY IS NOW RUNNING!
 echo ========================================
-echo.
-echo IMPORTANT:
-echo 1. Look at the "Cloudflare Tunnel" window
-echo 2. Copy the URL that looks like:
-echo    https://something-random-1234.trycloudflare.com
-echo 3. Use that URL in Lorebary settings
 echo.
 echo Control Panel: http://localhost:3001
+echo Proxy API:     http://localhost:3000/v1/chat/completions
+echo.
+echo Set your API key in the Control Panel if not configured.
 echo.
 echo ========================================
 echo.
-timeout /t 3 /nobreak >nul
+timeout /t 2 /nobreak >nul
 
-REM Open control panel in browser
+REM Open control panel
 start http://localhost:3001
 
-echo Press any key to minimize this window...
+echo Press any key to close this window...
 pause >nul
