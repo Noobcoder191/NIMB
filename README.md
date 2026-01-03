@@ -1,130 +1,135 @@
-# Lorebary DeepSeek 3.2 Proxy
+<p align="center">
+  <img src="https://img.shields.io/badge/⚡-NIM_PROXY-76b900?style=for-the-badge&labelColor=0a0b0d" alt="NIM Proxy"/>
+</p>
 
-A proxy server that connects Lorebary (or any OpenAI-compatible client) to NVIDIA NIM's DeepSeek 3.2 model. Features a web-based control panel for easy configuration.
+<h1 align="center">NIM Proxy</h1>
 
-## Features
+<p align="center">
+  <strong>A lightweight OpenAI-compatible proxy for NVIDIA NIM API</strong>
+</p>
 
-- 🔄 Proxy compatibility - works with Lorebary and other proxies
-- 🎛️ Web-based control panel for runtime configuration
-- 🌊 Streaming support for real-time responses
-- 🧠 Optional thinking/reasoning mode
-- 📊 Request logging and monitoring
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-24_LTS-339933?logo=node.js&logoColor=white" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/NVIDIA-NIM_API-76B900?logo=nvidia&logoColor=white" alt="NVIDIA"/>
+  <img src="https://img.shields.io/badge/License-Public_Domain-blue" alt="License"/>
+</p>
 
-## Prerequisites
+---
 
-- [Node.js](https://nodejs.org/) (v24 LTS)
-- [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) (for exposing localhost)
-- NVIDIA NIM API key (get one from [NVIDIA](https://build.nvidia.com/))
-- Dotenv (node has to already be installed before installing dotenv)
-  
-## Installation
+## ✨ Features
 
-1. Download the files or clone the repo
+| Feature | Description |
+|---------|-------------|
+| 🔄 **OpenAI Compatible** | Works with any OpenAI API client |
+| 🎛️ **Web Control Panel** | Modern UI for runtime configuration |
+| 🌐 **Cloudflare Tunnel** | One-click external access |
+| 🌊 **Streaming** | Real-time response streaming |
+| 🧠 **Thinking Mode** | Optional reasoning output |
+| 📊 **Usage Stats** | Track requests, tokens, errors |
+| ⏱️ **Uptime Monitor** | Live server uptime display |
 
-2. Install dependencies (the cmd has to be in the same directory as the other files):
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v24 LTS+
+- [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) (for tunneling)
+- [NVIDIA NIM API Key](https://build.nvidia.com/)
+
+### Installation
+
 ```bash
+# Clone the repo or download the files
+git clone https://github.com/yourusername/nim-proxy.git
+cd nim-proxy
+
+# Install dependencies
 npm install
+
+# Rename the cloud flared executable to "cloudflared.exe" and move it to the project folder
 ```
 
-3. Create a `.env` file in the project root:
-```env
-NIM_API_KEY=your_nvidia_api_key_here
-```
+### Running
 
-4. Move the cloudflared executable to the proxy folder, then rename it to "cloudflared.exe".
+**Windows:** Double-click `start-proxy.bat`
 
-5. Install dotenv by running "npm i dotenv" in your command prompt. 
-
-## Usage
-
-### Windows
-
-1. **Start the proxy**:
-   - Simply double-click `start-lorebary-proxy.bat`
-   - A Cloudflare tunnel URL will appear in one of the cmd windows (e.g., `https://something.trycloudflare.com`)
-   - Copy this URL to use in the proxy
-
-2. **If you're using LoreBary**:
-   - Open Lorebary custom proxy settings
-   - Set target url to your Cloudflare URL (YOU NEED TO ADD /v1/chat/completions IN THE END OF THE URL)
-   - Copy your custom lorebary url to janitor, put sommething random in the api key field, and put deepseek-reasoner in the model name
-
-### Linux/Mac
-
-1. **Start the proxy**:
+**Linux/Mac:**
 ```bash
 npm start
-```
-
-2. **In a separate terminal, start Cloudflare tunnel**:
-```bash
+# In another terminal:
 cloudflared tunnel --url http://localhost:3000
 ```
 
-3. Copy the generated URL and use it in Lorebary
+---
 
- (I HAVEN'T TESTED IT IN LINUX/MAC YET)
+## 🎛️ Control Panel
 
-## Control Panel
+Access at **http://localhost:3001**
 
-Access the web control panel at `http://localhost:3001` to configure:
+### Pages
 
-- **Show Reasoning**: Display model's thinking process in `<think>` tags
-- **Enable Thinking Mode**: Send thinking parameter to the model
-- **Request Logging**: Log all requests to console
-- **Streaming**: Enable/disable streaming responses
-- **Max Tokens**: Set maximum response length (1-8192)
-- **Temperature**: Adjust creativity level (0-1)
+| Page | What it does |
+|------|--------------|
+| **Dashboard** | Status, tunnel, current model |
+| **Statistics** | Request/token counts, errors |
+| **Settings** | Toggle reasoning, streaming, etc. |
+| **Configuration** | Set model name and API key |
 
-## Configuration
+---
 
-The proxy supports runtime configuration through the control panel. Settings are stored in memory and reset on restart.
+## 🔌 API Endpoints
 
-Default settings:
+| Endpoint | Description |
+|----------|-------------|
+| `POST /v1/chat/completions` | Chat completions (OpenAI format, use this at the end of the cloudflared url) |
+| `GET /v1/models` | List available models |
+| `GET /health` | Health check + stats |
+
+### Example Request
+
+```bash
+curl -X POST http://localhost:3000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gpt-4", "messages": [{"role": "user", "content": "Hello!"}]}'
+```
+
+---
+
+## ⚙️ Default Config
+
 ```javascript
 {
-  showReasoning: false,
-  enableThinking: false,
-  logRequests: true,
+  showReasoning: false,    // Show <think> tags
+  enableThinking: false,   // Extended computation
+  logRequests: true,       // Console logging
+  streamingEnabled: true,  // Stream responses
   maxTokens: 4096,
   temperature: 0.7,
-  streamingEnabled: true
+  currentModel: 'deepseek-ai/deepseek-v3.2'
 }
 ```
 
-## Troubleshooting
+---
 
-### "NIM_API_KEY environment variable not set"
-- Make sure you created a `.env` file with your NVIDIA API key
-- Restart the server after creating the `.env` file
+## 🛠️ Troubleshooting
 
-### Port already in use
-- The proxy uses ports 3000 and 3001
-- Close any applications using these ports or edit `server.js` to use different ports
+| Problem | Solution |
+|---------|----------|
+| API key not working | Set it in Control Panel → Configuration |
+| Port in use | Run `stop-proxy.bat` or kill processes on 3000/3001 |
+| Tunnel not starting | Make sure `cloudflared.exe` is in project folder |
+| Request timeout | Check internet connection and API key |
 
-### Cloudflare tunnel not starting
-- Make sure `cloudflared` is installed and in your PATH
-- Download from: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/
+---
 
+## 📜 License
 
-## Contributing
+Public Domain — use it however you want.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
-## License
-
-This is free and unencumbered software released into the public domain.
-
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software for any purpose, commercial or non-commercial, and by any means.
-
-## Support
-
-If you encounter issues:
-1. Check the console logs for error messages
-2. Verify your API key is correct
-3. Ensure all dependencies are installed
-4. Open an issue on GitHub with details
-
-This is very WIP, i plan on adding a bunch more features.
-
-95%~ made with AI.
+<p align="center">
+  <sub>Built with ⚡ for NVIDIA NIM</sub>
+</p>
