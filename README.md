@@ -77,8 +77,6 @@ Access at **http://localhost:3001**
 | **Settings** | Toggle reasoning, streaming, etc. |
 | **Configuration** | Set model name and API key |
 
-> **Tip:** No `.env` file needed! Set your API key directly in the Control Panel.
-
 ---
 
 ## 🔌 API Endpoints
