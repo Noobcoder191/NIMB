@@ -1,0 +1,17 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "NIMB",
+  "outputfilename": "NIMB",
+  "frontend:install": "echo skip",
+  "frontend:build": "echo skip",
+  "author": {
+    "name": "Noobcoder191",
+    "email": ""
+  },
+  "info": {
+    "productName": "NIMB",
+    "productVersion": "1.0.1",
+    "copyright": "Public Domain",
+    "comments": "from gooners, to gooners"
+  }
+}
