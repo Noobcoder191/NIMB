@@ -32,13 +32,13 @@
 ### Download
 
 1. Go to [**Releases**](https://github.com/Noobcoder191/JanitorxNim/releases)
-2. Download `NIMB 1.0.0.zip`
-3. Extract and run `NIMB 1.0.0.exe`
+2. Download `NIMB X.X.X.zip`
+3. Extract and run `NIMB X.X.X.exe`
 
 ### Requirements
 
 - **Windows 10/11** (64-bit)
-- [Cloudflared (if you're gonna build it yourself)](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) — place `cloudflared.exe` next to `NIMB 1.0.0.exe`
+- [Cloudflared (if you're gonna build it yourself)](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) — place `cloudflared.exe` next to `NIMB X.X.X.exe`
 - [NVIDIA NIM API Key](https://build.nvidia.com/)
 
 ---
