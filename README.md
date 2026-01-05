@@ -32,7 +32,7 @@
 ### Download
 
 1. Go to [**Releases**](https://github.com/Noobcoder191/JanitorxNim/releases)
-2. Download `NIMB.zip`
+2. Download `NIMB 1.0.0.zip`
 3. Extract and run `NIMB 1.0.0.exe`
 
 ### Requirements
