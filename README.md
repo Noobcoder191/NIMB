@@ -87,7 +87,8 @@ curl -X POST http://localhost:3000/v1/chat/completions \
   "enableThinking": false,
   "logRequests": true,
   "streamingEnabled": true,
-  "maxTokens": 4096,
+  "contextSize": 128000,
+  "maxTokens": 0,
   "temperature": 0.7,
   "currentModel": "deepseek-ai/deepseek-v3.2"
 }
