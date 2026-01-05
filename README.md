@@ -20,7 +20,6 @@
 | Feature | Description |
 |---------|-------------|
 | 🔄 **OpenAI Compatible** | Works with any OpenAI API client |
-| 🎛️ **Modern Control Panel** | Sleek dark UI for runtime configuration |
 | 🌐 **Cloudflare Tunnel** | One-click external access |
 | 🌊 **Streaming** | Real-time response streaming |
 | 🧠 **Thinking Mode** | Optional reasoning output |
