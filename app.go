@@ -23,6 +23,7 @@ type Config struct {
 	ShowReasoning    bool    `json:"showReasoning"`
 	EnableThinking   bool    `json:"enableThinking"`
 	LogRequests      bool    `json:"logRequests"`
+	ContextSize      int     `json:"contextSize"`
 	MaxTokens        int     `json:"maxTokens"`
 	Temperature      float64 `json:"temperature"`
 	StreamingEnabled bool    `json:"streamingEnabled"`
@@ -81,7 +82,8 @@ func NewApp() *App {
 			ShowReasoning:    false,
 			EnableThinking:   false,
 			LogRequests:      true,
-			MaxTokens:        4096,
+			ContextSize:      128000,
+			MaxTokens:        0,
 			Temperature:      0.7,
 			StreamingEnabled: true,
 			CurrentModel:     "deepseek-ai/deepseek-v3.2",
@@ -420,8 +422,8 @@ func (a *App) handleChatCompletions(w http.ResponseWriter, r *http.Request) {
 		nimReq["stream"] = config.StreamingEnabled
 	}
 
-	// Passthrough params
-	passthroughParams := []string{"top_p", "top_k", "frequency_penalty", "presence_penalty", "repetition_penalty", "min_p", "seed", "stop", "n"}
+	// Passthrough params from client (forward to NVIDIA as-is)
+	passthroughParams := []string{"top_p", "top_k", "frequency_penalty", "presence_penalty", "repetition_penalty", "min_p", "seed", "stop", "n", "context_length", "context_window", "truncate"}
 	for _, p := range passthroughParams {
 		if v, ok := reqBody[p]; ok {
 			nimReq[p] = v
