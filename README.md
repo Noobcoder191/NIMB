@@ -25,7 +25,6 @@
 | 🌊 **Streaming** | Real-time response streaming |
 | 🧠 **Thinking Mode** | Optional reasoning output |
 | 📊 **Usage Stats** | Track requests, tokens, errors |
-| 🪶 **Lightweight** | ~11MB portable exe (no Electron bloat) |
 
 ---
 
