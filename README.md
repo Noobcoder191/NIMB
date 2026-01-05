@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Windows-Portable_EXE-0078D6?logo=windows&logoColor=white" alt="Windows"/>
   <img src="https://img.shields.io/badge/NVIDIA-NIM_API-76B900?logo=nvidia&logoColor=white" alt="NVIDIA"/>
   <img src="https://img.shields.io/badge/License-Public_Domain-blue" alt="License"/>
 </p>
