@@ -34,7 +34,7 @@
 
 1. Go to [**Releases**](https://github.com/Noobcoder191/JanitorxNim/releases)
 2. Download `NIMB X.X.X.zip`
-3. Extract and run `NIMB X.X.X.exe`
+3. Extract and run `NIMB.exe`
 
 ### Requirements
 
