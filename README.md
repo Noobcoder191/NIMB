@@ -136,7 +136,3 @@ This distribution includes [cloudflared](https://github.com/cloudflare/cloudflar
 - License: https://github.com/cloudflare/cloudflared/blob/master/LICENSE
 
 ---
-
-<p align="center">
-  <sub>Built with ✦ by gooners</sub>
-</p>
