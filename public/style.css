@@ -90,33 +90,32 @@ body {
 
 .titlebar-controls {
     display: flex;
-    gap: 8px;
+    gap: 0;
     -webkit-app-region: no-drag;
 }
 
 .titlebar-btn {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+    width: 46px;
+    height: 32px;
+    border-radius: 0;
     border: none;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: background 0.15s;
+    background: transparent;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .titlebar-btn:hover {
-    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
 }
 
-.titlebar-btn.close {
-    background: #ff5f57;
-}
-
-.titlebar-btn.minimize {
-    background: #febc2e;
-}
-
-.titlebar-btn.maximize {
-    background: #28c840;
+.titlebar-btn.close:hover {
+    background: #e81123;
+    color: white;
 }
 
 /* Layout */
@@ -518,6 +517,84 @@ section.active {
     color: var(--text-muted);
 }
 
+/* Custom Dropdown */
+.custom-dropdown {
+    position: relative;
+}
+
+.dropdown-input {
+    cursor: pointer;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-list.show {
+    display: block;
+    animation: dropdownIn 0.2s var(--ease-out);
+}
+
+@keyframes dropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-bottom: 1px solid rgba(48, 54, 61, 0.3);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+}
+
+.dropdown-item.highlighted {
+    background: var(--accent-dim);
+    color: var(--accent);
+}
+
+.dropdown-category {
+    padding: 8px 16px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--bg-tertiary);
+    position: sticky;
+    top: 0;
+}
+
 /* Toggle */
 .toggle-row {
     display: flex;
@@ -622,6 +699,21 @@ input:checked+.toggle-slider::before {
     color: var(--accent);
     min-width: 40px;
     text-align: right;
+}
+
+.range-input-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.range-input-container .range-slider {
+    flex: 1;
+}
+
+.range-input-number {
+    width: 100px !important;
+    text-align: center;
 }
 
 /* Tunnel Box */

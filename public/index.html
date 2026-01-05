@@ -15,11 +15,24 @@
     <div class="titlebar">
         <span class="titlebar-title">NIMB</span>
         <div class="titlebar-controls">
-            <button class="titlebar-btn minimize" onclick="window.electronAPI?.minimize()"></button>
-            <button class="titlebar-btn maximize" onclick="window.electronAPI?.maximize()"></button>
-            <button class="titlebar-btn close" onclick="window.electronAPI?.close()"></button>
+            <button class="titlebar-btn" id="minimizeBtn" onclick="window.electronAPI?.minimize()">
+                <svg width="10" height="1" viewBox="0 0 10 1">
+                    <rect width="10" height="1" fill="currentColor" />
+                </svg>
+            </button>
+            <button class="titlebar-btn" id="maximizeBtn" onclick="window.electronAPI?.maximize()">
+                <svg width="10" height="10" viewBox="0 0 10 10">
+                    <rect x="0" y="0" width="10" height="10" stroke="currentColor" stroke-width="1" fill="none" />
+                </svg>
+            </button>
+            <button class="titlebar-btn close" id="closeBtn" onclick="window.electronAPI?.close()">
+                <svg width="10" height="10" viewBox="0 0 10 10">
+                    <path d="M0 0L10 10M10 0L0 10" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+            </button>
         </div>
     </div>
+
 
 
     <!-- Toast Container -->
@@ -241,14 +254,19 @@
                             <label class="form-label">Temperature: <span id="tempVal"
                                     style="color: var(--accent);">0.7</span></label>
                             <div class="range-container">
-                                <input type="range" class="range-slider" id="temperature" min="0" max="1" step="0.1"
+                                <input type="range" class="range-slider" id="temperature" min="0" max="2" step="0.1"
                                     value="0.7">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Max Tokens</label>
-                            <input type="number" class="form-input" id="maxTokens" placeholder="4096">
+                            <div class="range-input-container">
+                                <input type="range" class="range-slider" id="maxTokensSlider" min="256" max="131072"
+                                    step="256" value="4096">
+                                <input type="number" class="form-input range-input-number" id="maxTokens"
+                                    placeholder="4096" value="4096">
+                            </div>
                         </div>
 
                         <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
@@ -263,9 +281,12 @@
                             <h3 class="panel-title">Model Configuration</h3>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Target Model</label>
-                            <input type="text" class="form-input" id="modelName"
-                                placeholder="deepseek-ai/deepseek-v3.2">
+                            <label class="form-label">Model Presets</label>
+                            <div class="custom-dropdown" id="modelDropdown">
+                                <input type="text" class="form-input dropdown-input" id="modelName"
+                                    placeholder="Type to search or select a model..." autocomplete="off">
+                                <div class="dropdown-list" id="modelList"></div>
+                            </div>
                         </div>
                         <button class="btn btn-primary" onclick="saveModel()">Update Model</button>
                     </div>
@@ -279,9 +300,6 @@
                             <label class="form-label">API Key</label>
                             <input type="password" class="form-input" id="apiKey" placeholder="nvapi-...">
                         </div>
-                        <p style="font-size: 12px; color: var(--warning); margin-bottom: 16px;">
-                            ⚠ Key is saved to settings file and persists across restarts.
-                        </p>
                         <button class="btn btn-primary" onclick="saveApiKey()">Update API Key</button>
                     </div>
                 </section>

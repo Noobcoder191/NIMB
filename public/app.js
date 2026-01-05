@@ -150,6 +150,7 @@ function updateUI(data) {
         document.getElementById('logRequests').checked = data.config.logRequests;
         document.getElementById('streamingEnabled').checked = data.config.streamingEnabled;
         document.getElementById('maxTokens').value = data.config.maxTokens;
+        document.getElementById('maxTokensSlider').value = data.config.maxTokens;
         document.getElementById('temperature').value = data.config.temperature;
         document.getElementById('tempVal').innerText = data.config.temperature;
     }
@@ -172,7 +173,7 @@ function updateTunnelUI(status, url) {
         dot.style.background = 'var(--success)';
         dot.style.animation = 'pulse 2s infinite';
         statusText.textContent = 'Running';
-        urlEl.textContent = url;
+        urlEl.textContent = url + '/v1/chat/completions';
         urlEl.classList.remove('hidden');
         startBtn.classList.add('hidden');
         stopBtn.classList.remove('hidden');
@@ -214,6 +215,15 @@ function updateErrorLog(logs) {
 // Actions
 document.getElementById('temperature').addEventListener('input', (e) => {
     document.getElementById('tempVal').innerText = e.target.value;
+});
+
+// Sync maxTokens slider and input
+document.getElementById('maxTokensSlider').addEventListener('input', (e) => {
+    document.getElementById('maxTokens').value = e.target.value;
+});
+document.getElementById('maxTokens').addEventListener('input', (e) => {
+    const val = Math.min(131072, Math.max(256, parseInt(e.target.value) || 4096));
+    document.getElementById('maxTokensSlider').value = val;
 });
 
 async function saveSettings() {
@@ -393,6 +403,206 @@ function dismissUpdate() {
 }
 
 // Init
+const NIM_MODELS = [
+    // DeepSeek
+    "deepseek-ai/deepseek-v3.2",
+    "deepseek-ai/deepseek-v3.1-terminus",
+    "deepseek-ai/deepseek-v3.1",
+    "deepseek-ai/deepseek-r1",
+    "deepseek-ai/deepseek-r1-0528",
+    "deepseek-ai/deepseek-r1-distill-llama-8b",
+    "deepseek-ai/deepseek-r1-distill-qwen-32b",
+    "deepseek-ai/deepseek-r1-distill-qwen-14b",
+    "deepseek-ai/deepseek-r1-distill-qwen-7b",
+
+    // Mistral / Mixtral
+    "mistralai/mistral-large-3-675b-instruct-2512",
+    "mistralai/mistral-medium-3-instruct",
+    "mistralai/mistral-small-3.1-24b-instruct-2503",
+    "mistralai/mistral-small-24b-instruct",
+    "mistralai/mistral-7b-instruct-v0.3",
+    "mistralai/mistral-7b-instruct-v0.2",
+    "mistralai/mixtral-8x22b-instruct-v0.1",
+    "mistralai/mixtral-8x7b-instruct-v0.1",
+    "mistralai/ministral-14b-instruct-2512",
+    "mistralai/magistral-small-2506",
+    "mistralai/devstral-2-123b-instruct-2512",
+    "mistralai/mamba-codestral-7b-v0.1",
+
+    // NVIDIA (NIM / Nemotron)
+    "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+    "nvidia/llama-3.3-nemotron-super-49b-v1",
+    "nvidia/llama-3.1-nemotron-ultra-253b-v1",
+    "nvidia/llama-3.1-nemotron-nano-vl-8b-v1",
+    "nvidia/llama-3.1-nemotron-nano-8b-v1",
+    "nvidia/llama-3.1-nemotron-nano-4b-v1.1",
+    "nvidia/mistral-nemotron",
+    "nvidia/nemotron-3-nano-30b-a3b",
+    "nvidia/nemotron-nano-12b-v2-vl",
+    "nvidia/nvidia-nemotron-nano-9b-v2",
+    "nvidia/nemotron-mini-4b-instruct",
+    "nvidia/nemotron-4-mini-hindi-4b-instruct",
+    "nvidia/usdcode",
+
+    // Meta (Llama & Derivados)
+    "meta/llama-4-maverick-17b-128e-instruct",
+    "meta/llama-4-scout-17b-16e-instruct",
+    "meta/llama-3.3-70b-instruct",
+    "meta/llama-3.2-90b-vision-instruct",
+    "meta/llama-3.2-11b-vision-instruct",
+    "meta/llama-3.2-3b-instruct",
+    "meta/llama-3.2-1b-instruct",
+    "meta/llama-3.1-405b-instruct",
+    "meta/llama-3.1-70b-instruct",
+    "meta/llama-3.1-8b-instruct",
+    "meta/llama-3.1-swallow-70b-instruct-v0.1",
+    "meta/llama-3.1-swallow-8b-instruct-v0.1",
+    "meta/llama-3-70b-instruct",
+    "meta/llama-3-8b-instruct",
+    "meta/llama-3-taiwan-70b-instruct",
+    "meta/llama-3-swallow-70b-instruct-v0.1",
+    "meta/llama3-chatqa-1.5-8b",
+    "dracarys/dracarys-llama-3.1-70b-instruct",
+
+    // Google (Gemma)
+    "google/gemma-3-27b-it",
+    "google/gemma-3-1b-it",
+    "google/gemma-3n-e4b-it",
+    "google/gemma-3n-e2b-it",
+    "google/gemma-2-27b-it",
+    "google/gemma-2-9b-it",
+    "google/gemma-2-2b-it",
+    "google/gemma-7b",
+    "google/gemma-2-9b-cpt-sahabatai-instruct",
+
+    // Microsoft (Phi)
+    "microsoft/phi-4-mini-flash-reasoning",
+    "microsoft/phi-4-mini-instruct",
+    "microsoft/phi-4-multimodal-instruct",
+    "microsoft/phi-3.5-mini-instruct",
+    "microsoft/phi-3-medium-128k-instruct",
+    "microsoft/phi-3-medium-4k-instruct",
+    "microsoft/phi-3-small-128k-instruct",
+    "microsoft/phi-3-small-8k-instruct",
+    "microsoft/phi-3-mini-128k-instruct",
+    "microsoft/phi-3-mini-4k-instruct",
+
+    // Qwen / Kimi / Modelos Asiáticos
+    "qwen/qwen3-coder-480b-a35b-instruct",
+    "qwen/qwen3-next-80b-a3b-instruct",
+    "qwen/qwen3-next-80b-a3b-thinking",
+    "qwen/qwen3-235b-a22b",
+    "qwen/qwq-32b",
+    "qwen/qwen2.5-coder-32b-instruct",
+    "qwen/qwen2.5-coder-7b-instruct",
+    "qwen/qwen2.5-7b-instruct",
+    "qwen/qwen2-7b-instruct",
+    "moonshotai/kimi-k2-thinking",
+    "moonshotai/kimi-k2-instruct",
+    "moonshotai/kimi-k2-instruct-0905",
+    "minimaxai/minimax-m2",
+    "baichuan-inc/baichuan2-13b-chat",
+    "thudm/chatglm3-6b",
+
+    // Outros
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "opengpt-x/teuken-7b-instruct-commercial-v0.4",
+    "sarvamai/sarvam-m",
+    "stockmark/stockmark-2-100b-instruct",
+    "bielik/bielik-11b-v2.6-instruct",
+    "seed-oss/seed-oss-36b-instruct",
+    "ibm/granite-3.3-8b-instruct",
+    "ai21labs/jamba-1.5-mini-instruct",
+    "mediatek/breeze-7b-instruct",
+    "rakuten/rakutenai-7b-instruct",
+    "rakuten/rakutenai-7b-chat",
+    "cyberagent/marin-8b-instruct",
+    "utter-project/eurollm-9b-instruct",
+    "colosseum/colosseum_355b_instruct_16k",
+    "tiiuae/falcon3-7b-instruct",
+    "italia/italia_10b_instruct_16k"
+];
+
+// Custom dropdown functionality
+function initModelDropdown() {
+    const input = document.getElementById('modelName');
+    const list = document.getElementById('modelList');
+    let highlightedIndex = -1;
+
+    // Populate dropdown
+    function renderList(filter = '') {
+        const filterLower = filter.toLowerCase();
+        const filtered = NIM_MODELS.filter(m => m.toLowerCase().includes(filterLower));
+
+        list.innerHTML = filtered.map((m, i) =>
+            `<div class="dropdown-item" data-value="${m}" data-index="${i}">${m}</div>`
+        ).join('');
+
+        highlightedIndex = -1;
+    }
+
+    // Show dropdown
+    function showDropdown() {
+        renderList(input.value);
+        list.classList.add('show');
+    }
+
+    // Hide dropdown
+    function hideDropdown() {
+        list.classList.remove('show');
+        highlightedIndex = -1;
+    }
+
+    // Select item
+    function selectItem(value) {
+        input.value = value;
+        hideDropdown();
+    }
+
+    // Event listeners
+    input.addEventListener('focus', showDropdown);
+    input.addEventListener('input', () => renderList(input.value));
+
+    input.addEventListener('blur', (e) => {
+        // Delay to allow click on item
+        setTimeout(() => hideDropdown(), 150);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        const items = list.querySelectorAll('.dropdown-item');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlightedIndex = Math.max(highlightedIndex - 1, 0);
+        } else if (e.key === 'Enter' && highlightedIndex >= 0) {
+            e.preventDefault();
+            const item = items[highlightedIndex];
+            if (item) selectItem(item.dataset.value);
+        } else if (e.key === 'Escape') {
+            hideDropdown();
+        }
+
+        // Update highlight
+        items.forEach((item, i) => {
+            item.classList.toggle('highlighted', i === highlightedIndex);
+            if (i === highlightedIndex) item.scrollIntoView({ block: 'nearest' });
+        });
+    });
+
+    list.addEventListener('click', (e) => {
+        const item = e.target.closest('.dropdown-item');
+        if (item) selectItem(item.dataset.value);
+    });
+
+    // Initial render
+    renderList();
+}
+
 setInterval(fetchData, 2000);
 fetchData();
+initModelDropdown();
 checkForUpdates();

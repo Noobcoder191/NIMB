@@ -128,19 +128,43 @@ app.post('/v1/chat/completions', async (req, res) => {
             return res.status(500).json({ error: { message: 'API key not configured.', type: 'configuration_error', code: 500 } });
         }
 
-        const { model, messages, temperature, max_tokens, stream, top_p, frequency_penalty, presence_penalty } = req.body;
+        const { model, messages, ...clientParams } = req.body;
         const nimModel = config.currentModel || MODEL_MAPPING[model] || 'deepseek-ai/deepseek-v3.2';
         if (config.logRequests) console.log(`[NIMB] ${model} -> ${nimModel}`);
 
-        const nimRequest = { model: nimModel, messages, temperature: temperature ?? config.temperature, max_tokens: max_tokens || config.maxTokens, stream: stream ?? config.streamingEnabled };
-        if (top_p !== undefined) nimRequest.top_p = top_p;
-        if (frequency_penalty !== undefined) nimRequest.frequency_penalty = frequency_penalty;
-        if (presence_penalty !== undefined) nimRequest.presence_penalty = presence_penalty;
-        if (config.enableThinking) nimRequest.extra_body = { chat_template_kwargs: { thinking: true } };
+        // Build request: client params override NIMB defaults
+        const nimRequest = {
+            model: nimModel,
+            messages,
+            // Use client values if provided, otherwise fall back to NIMB config
+            temperature: clientParams.temperature ?? config.temperature,
+            max_tokens: clientParams.max_tokens || config.maxTokens,
+            stream: clientParams.stream ?? config.streamingEnabled
+        };
+
+        // Pass through all supported OpenAI/NIM parameters
+        const passthroughParams = [
+            'top_p', 'top_k', 'frequency_penalty', 'presence_penalty',
+            'repetition_penalty', 'min_p', 'seed', 'stop', 'logit_bias',
+            'n', 'user', 'response_format'
+        ];
+        passthroughParams.forEach(param => {
+            if (clientParams[param] !== undefined) {
+                nimRequest[param] = clientParams[param];
+            }
+        });
+
+        // Handle extra_body for thinking mode (merge client + NIMB config)
+        if (clientParams.extra_body || config.enableThinking) {
+            nimRequest.extra_body = {
+                ...(clientParams.extra_body || {}),
+                ...(config.enableThinking ? { chat_template_kwargs: { thinking: true } } : {})
+            };
+        }
 
         const response = await axios.post(`${NIM_API_BASE}/chat/completions`, nimRequest, {
             headers: { 'Authorization': `Bearer ${NIM_API_KEY}`, 'Content-Type': 'application/json' },
-            responseType: stream ? 'stream' : 'json', timeout: 120000
+            responseType: nimRequest.stream ? 'stream' : 'json', timeout: 120000
         });
 
         usageStats.messageCount++;
