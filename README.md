@@ -20,14 +20,12 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🖥️ **Standalone EXE** | Single portable executable, no installation needed |
 | 🔄 **OpenAI Compatible** | Works with any OpenAI API client |
 | 🎛️ **Modern Control Panel** | Sleek dark UI for runtime configuration |
 | 🌐 **Cloudflare Tunnel** | One-click external access |
 | 🌊 **Streaming** | Real-time response streaming |
 | 🧠 **Thinking Mode** | Optional reasoning output |
 | 📊 **Usage Stats** | Track requests, tokens, errors |
-| 🔔 **Update Notifier** | Auto-checks for new releases |
 
 ---
 
@@ -42,14 +40,14 @@
 ### Requirements
 
 - **Windows 10/11** (64-bit)
-- [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) (for tunneling) — place `cloudflared.exe` next to `NIMB 1.0.0.exe`
-- [NVIDIA NIM API Key](https://build.nvidia.com/) (free)
+- [Cloudflared (if you're gonna build it yourself)](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) — place `cloudflared.exe` next to `NIMB 1.0.0.exe`
+- [NVIDIA NIM API Key](https://build.nvidia.com/)
 
 ---
 
 ## 🎛️ Control Panel
 
-The app opens a modern control panel with:
+The app opens a control panel with:
 
 | Page | What it does |
 |------|--------------|
@@ -58,17 +56,15 @@ The app opens a modern control panel with:
 | **Settings** | Toggle reasoning, streaming, etc. |
 | **Configuration** | Set model name and API key |
 
-> **Tip:** Settings are saved automatically and persist across restarts.
-
 ---
 
 ## 🔌 API Endpoints
 
-Use NIMB as a proxy for your favorite tools (SillyTavern, etc.):
+Use NIMB as a proxy for your favorite tools (SillyTavern, Janitor AI etc.):
 
 | Endpoint | Description |
 |----------|-------------|
-| `POST /v1/chat/completions` | Chat completions (OpenAI format) |
+| `POST /v1/chat/completions` | Chat completions |
 | `GET /v1/models` | List available models |
 | `GET /health` | Health check + stats |
 
@@ -79,7 +75,7 @@ Use NIMB as a proxy for your favorite tools (SillyTavern, etc.):
 ```bash
 curl -X POST http://localhost:3000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -d '{"model": "gpt-4", "messages": [{"role": "user", "content": "Hello!"}]}'
+  -d '{"model": "deepseek-ai/deepseek-r1-0528", "messages": [{"role": "user", "content": "Hello!"}]}'
 ```
 
 ---
@@ -127,22 +123,6 @@ npm start
 # Build portable exe
 npm run build
 ```
-
----
-
-## 📁 Project Structure
-
-```
-JanitorxNim/
-├── main.js             # Electron main process
-├── server.js           # Backend server
-├── public/             # Frontend (HTML/CSS/JS)
-├── assets/             # Icons and images
-├── dist/               # Built executables (gitignored)
-└── README.md
-```
-
----
 
 ## 📜 License
 
