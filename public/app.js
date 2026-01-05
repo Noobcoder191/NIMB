@@ -328,7 +328,7 @@ function refreshData() {
 }
 
 // Version Update Checker
-const CURRENT_VERSION = '1.0.0';
+const CURRENT_VERSION = '1.0.1';
 const GITHUB_REPO = 'Noobcoder191/JanitorxNim';
 const GITHUB_API = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
