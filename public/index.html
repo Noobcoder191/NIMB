@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:* https://api.github.com">
+    <title>NIMB</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Title Bar -->
+    <div class="titlebar">
+        <span class="titlebar-title">NIMB</span>
+        <div class="titlebar-controls">
+            <button class="titlebar-btn minimize" onclick="window.electronAPI?.minimize()"></button>
+            <button class="titlebar-btn maximize" onclick="window.electronAPI?.maximize()"></button>
+            <button class="titlebar-btn close" onclick="window.electronAPI?.close()"></button>
+        </div>
+    </div>
+
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Layout -->
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-name">NIMB</div>
+                <div class="brand-tagline">from gooners, to gooners</div>
+            </div>
+
+            <nav class="nav">
+                <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
+                    <span class="nav-icon">◈</span> Dashboard
+                </div>
+                <div class="nav-item" data-page="statistics" onclick="switchPage('statistics')">
+                    <span class="nav-icon">◇</span> Statistics
+                </div>
+                <div class="nav-item" data-page="settings" onclick="switchPage('settings')">
+                    <span class="nav-icon">◆</span> Settings
+                </div>
+                <div class="nav-item" data-page="config" onclick="switchPage('config')">
+                    <span class="nav-icon">◎</span> Configuration
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Online</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <header class="header">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="header-stats">
+                    <div class="header-stat">
+                        <div class="header-stat-label">Uptime</div>
+                        <div class="header-stat-value" id="uptimeDisplay">0h 0m</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard -->
+                <section id="dashboard" class="active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Requests</div>
+                            <div class="stat-value accent" id="totalReq">0</div>
+                            <div class="stat-sub">Lifetime</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Error Rate</div>
+                            <div class="stat-value" id="errorRate">0.00%</div>
+                            <div class="stat-sub"><span id="errCount">0</span> failed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Token Usage</div>
+                            <div class="stat-value gold" id="tokenUsage">0</div>
+                            <div class="stat-sub">Total consumed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">System Uptime</div>
+                            <div class="stat-value accent" id="uptimeStat">0h</div>
+                            <div class="stat-sub">Since start</div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">⬡</span>
+                            <h3 class="panel-title">Cloudflare Tunnel</h3>
+                        </div>
+                        <div class="tunnel-box">
+                            <div class="tunnel-status">
+                                <span class="status-dot" id="tunnelDot"
+                                    style="background: var(--text-muted); animation: none;"></span>
+                                <span id="tunnelStatus">Stopped</span>
+                            </div>
+                            <div class="tunnel-url hidden" id="tunnelUrl" onclick="copyToClipboard(this.innerText)">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="btn btn-primary" id="startTunnelBtn" onclick="startTunnel()">Start
+                                Tunnel</button>
+                            <button class="btn btn-danger hidden" id="stopTunnelBtn" onclick="stopTunnel()">Stop
+                                Tunnel</button>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◉</span>
+                            <h3 class="panel-title">Active Model</h3>
+                        </div>
+                        <div class="model-display" id="currentModelDisplay">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Statistics -->
+                <section id="statistics">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Prompt Tokens</div>
+                            <div class="stat-value gold" id="promptTok">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Completion Tokens</div>
+                            <div class="stat-value gold" id="compTok">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total Tokens</div>
+                            <div class="stat-value accent" id="totalTok">0</div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◈</span>
+                            <h3 class="panel-title">Session Info</h3>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Last Request</h4>
+                            </div>
+                            <span style="font-size: 13px; color: var(--text-secondary);" id="lastReq">-</span>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Session Started</h4>
+                            </div>
+                            <span style="font-size: 13px; color: var(--text-secondary);" id="sessionStart">-</span>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button class="btn btn-secondary" onclick="refreshData()">Refresh</button>
+                            <button class="btn btn-danger" onclick="resetStats()">Reset Statistics</button>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">⚠</span>
+                            <h3 class="panel-title">Error Log (<span id="errLogCount">0</span>)</h3>
+                        </div>
+                        <div class="log-container" id="errorLog">
+                            <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+                                No errors recorded</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings -->
+                <section id="settings">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◆</span>
+                            <h3 class="panel-title">Behavioral Toggles</h3>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Reasoning Chains</h4>
+                                <p>Expose internal thought process in response</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="showReasoning">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Deep Thinking</h4>
+                                <p>Extended computation for complex queries</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="enableThinking">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Request Logging</h4>
+                                <p>Log detailed request info to console</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="logRequests">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <h4>Streaming</h4>
+                                <p>Stream tokens as they are generated</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="streamingEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◎</span>
+                            <h3 class="panel-title">AI Parameters</h3>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Temperature: <span id="tempVal"
+                                    style="color: var(--accent);">0.7</span></label>
+                            <div class="range-container">
+                                <input type="range" class="range-slider" id="temperature" min="0" max="1" step="0.1"
+                                    value="0.7">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Max Tokens</label>
+                            <input type="number" class="form-input" id="maxTokens" placeholder="4096">
+                        </div>
+
+                        <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
+                    </div>
+                </section>
+
+                <!-- Configuration -->
+                <section id="config">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◉</span>
+                            <h3 class="panel-title">Model Configuration</h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Model</label>
+                            <input type="text" class="form-input" id="modelName"
+                                placeholder="deepseek-ai/deepseek-v3.2">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveModel()">Update Model</button>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-icon">◈</span>
+                            <h3 class="panel-title">API Credentials</h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">API Key</label>
+                            <input type="password" class="form-input" id="apiKey" placeholder="nvapi-...">
+                        </div>
+                        <p style="font-size: 12px; color: var(--warning); margin-bottom: 16px;">
+                            ⚠ Key is saved to settings file and persists across restarts.
+                        </p>
+                        <button class="btn btn-primary" onclick="saveApiKey()">Update API Key</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
